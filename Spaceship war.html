@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html>
+    <body>
+			
+		      <img src="Spaceship%20war.png" alt="Spaceship" style="width :400px; height:100px;">
+		
+            <div>	
+            
+            
+            <canvas id="canvas1" width="400" height="200" tabIndex="0" style="background: url('back1333.gif')">
+            </canvas>
+                
+            </div>
+            
+        <script>
+            var canvas = document.getElementById("canvas1");
+            var ctx = canvas.getContext("2d");
+            
+            //get the animation frame depending on the browser engine
+            var requestAnimationFrame = window.requestAnimationFrame ||
+                                 window.mozRequestAnimationFrame ||
+                                 window.webkitRequestAnimationFrame ||
+                                        window.msRequestAnimationFrame;
+            
+        
+            
+            
+            
+            
+            //set intial start x and y coordinates
+            var targetImageX = 5;
+            var targetImageY = 10;
+
+            var targetImage = new Image();
+            targetImage.src = 'cb390effd6eadbc.png';
+           
+            var tankX = canvas.width / 2;
+            var tankY = canvas.height - 25;
+            
+            //
+            
+           
+            
+            //variable for hits
+            
+
+            var delayBetweenFrames = 100; //the delay time is in milliseconds   
+
+            //missile attributes
+            var missileX = tankX + 5;
+            var missileY = tankY - 15;
+            
+            var missileImageX = tankX - 10;
+            var missileImageY = tankY - 15;
+
+            var moveMissile = false;
+            
+            var missileImage = new Image();
+            missileImage.src = 'BAOyZX.png';
+            //
+            
+            //shadow attributes
+            var shadowX = canvas.width/2;
+            var shadowY = canvas.height - 25;
+            
+            var shadowImageX = 35;
+            var shadowImageY = 35;
+            
+            var moveShadow = false;
+            
+            var shadowImage = new Image();
+            shadowImage.src = '51432.png';
+            
+            //
+        
+            
+            //Big boss shadow attributes
+            
+            var bossX = canvas.width/2;
+            var bossY = canvas.height - 25;
+            
+            var bossImageX = 400;
+            var bossImageY = 70;
+            
+            var moveBoss = false;
+            
+            var bossImage = new Image();
+            bossImage.src = 'badddd.png';
+            
+            
+            //
+          
+             //time remaining
+            let timeRemaining = 30;
+
+            //variable for hits
+            var hits = 0;
+            var misses = 0;
+         
+            
+            //define variable for the level
+            var currentLevel = 1;
+
+            //configure the audio files
+            var fireAudio = new Audio();
+            fireAudio.src = "Space ship whoosh by 1.wav";
+
+            var hitAudio = new Audio();
+            hitAudio.src = "Photon gun shot.wav";
+            
+             var backgroundAudio = new Audio();
+            backgroundAudio.src = "Satellite noise.wav";
+            
+            
+            //handle space bar key press to fire a missile
+            canvas.addEventListener("keydown", handleEvent);
+            //handle space bar key press to fire a missile
+            canvas.addEventListener("touchstart", handleTouchStart);
+            
+            function handleTouchStart(touchEvent) {
+                var rect = canvas.getBoundingClientRect()
+                
+                let touchX = touchEvent.changedTouches[0].clientX - rect.left;
+                
+                let touchY = touchEvent.changedTouches[0].clientX - rect.top;
+                
+                if(getDistanceTank(touchX, touchY) <= 10){
+                    
+                    moveMissile=true;
+                    fireAudio();
+                    backgroundAudio();
+                }
+                
+                
+                
+                
+            }
+            
+            
+            
+            
+            
+
+            function handleEvent(event) { //event handler function
+				if (event.keyCode == 32) { //SPACE BAR PRESSED - fire missile
+					moveMissile = true;
+                    fireAudio.play();
+                }
+                    else if (event.keyCode == 37) { // move left
+                    
+                        
+                    if (missileImageX > 55){
+                
+                    tankX = tankX - 5;
+                    shadowX = shadowX - 5;
+                    bossX = bossX - 5;
+                    missileImageX = missileImageX - 5;
+                
+                }
+                        
+                }
+                    else if (event.keyCode == 39) { //move right
+                    
+                        
+                                            
+                    if (missileImageX < 300)
+                {
+                
+                    tankX = tankX + 5;
+                    shadowX = shadowX +5;
+                    bossX = bossX + 5;
+                    missileImageX = missileImageX + 5;
+                        
+                }
+                
+                
+				}
+            }
+
+              
+
+            //declare the animate() function
+            function animate() {         
+                //use the setTimeout to do the animation between frame using the delayBetweenFrames
+                setTimeout(function() {
+                    //animation code goes into this anonymous function handler
+                    requestAnimationFrame(animate);
+
+                    //clear the whole canvas area   
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    //move the target to right 
+                    if (currentLevel == 1)
+                        targetImageX += 2;
+                    if (currentLevel == 2)
+                        targetImageX += 4;
+                    if (currentLevel == 3)
+                        targetImageX += 6;
+                    //check if the target reached the end of the canvas
+                    if (targetImageX > canvas.width)
+                        targetImageX = 20;
+                    
+                    //move the shadow to right 
+                    if (currentLevel == 1)
+                        shadowImageX += 5;
+                    if (currentLevel == 2)
+                        shadowImageX += 9;
+                    if (currentLevel == 3)
+                        shadowImageX += 12;
+                    //check if the shadow reached the end of the canvas
+                    if (shadowImageX > canvas.width)
+                        shadowImageX = 20;
+                    
+                    
+                    //move the boss to left 
+                    if (currentLevel == 1)
+                        bossImageX -= 10;
+                    if (currentLevel == 2)
+                        bossImageX -= 12;
+                    if (currentLevel == 3)
+                        bossImageX -= 14;
+                    //check if the boss reached the end of the canvas
+                    if (bossImageX > canvas.width > bossImageX ){
+                          bossImageX = 400; }
+                    
+                    
+ 
+                    if (moveMissile && targetImageY < canvas.width) {
+                        missileImageY -= 10; }
+                        
+                        
+                 
+                    
+                    
+                    
+                    
+                        //move missile
+                        //handle collision and hit first enime
+                if (getDistance() >= 0 && getDistance() <= 30 ) {
+
+                            //increment the misses
+                            misses++;
+                            
+                        
+
+                            //play the hitAudio
+                            hitAudio.play();
+
+                            //reset the missile 
+                            moveMissile = false;
+                            missileImageY = tankY - 10;
+
+                            //reset the targetBallX back to 20
+                            targetImageX = 20;
+                            
+                            
+                  
+                            //move back to level one
+                    
+                            if (currentLevel == 1 && misses == 1) {
+                                currentLevel = 1;
+                                misses = 0;
+                                hits = 0;
+                                window.alert("Moved back to level 1");
+                                      }    
+                    
+                    
+                            if (currentLevel == 1 && misses == 2) {
+                                currentLevel = 1;
+                                misses = 0;
+                                hits = 0;
+                                window.alert("Moved back to level 1");
+                            }
+                    
+                            if (currentLevel == 1 && misses == 3) {
+                                currentLevel = 1;
+                                misses = 0;
+                                hits = 0;
+                                window.alert("Moved back to level 1");
+                                                                }
+                    
+                                      
+                            //for level two
+                    
+                            if (currentLevel == 2 && misses == 1) {
+                                currentLevel = 1;
+                                misses = 0;
+                                hits = 0;
+                                window.alert("Moved back to level 1");
+                                      }
+                    
+                    
+                            if (currentLevel == 2 && misses == 2) {
+                                currentLevel = 1;
+                                misses = 0;
+                                hits = 0;
+                                window.alert("Moved back to level 1");
+                            }
+                    
+                            if (currentLevel == 2 && misses == 3) {
+                                currentLevel = 1;
+                                misses = 0;
+                                hits = 0;
+                                window.alert("Moved back to level 1");
+                                                                }
+                    
+                    
+                    
+                    
+                    
+                        }    
+                    
+                //handle collision and hit
+                if (getDistanceBoss() >= 0 && getDistanceBoss() <= 30 ) {
+
+                            //increment the misses
+                            misses++;
+                            
+                        
+
+                            //play the hitAudio
+                            hitAudio.play();
+
+                            //reset the missile 
+                            moveMissile = false;
+                            missileImageY = tankY - 10;
+
+                            //reset the targetBallX back to 20
+                            //bossImageX = tankX + 100;
+                            bossImageX = 400;
+                            
+                  
+                            //for level 1 move back to level 1
+                    
+                        if (currentLevel == 1 && misses == 1) {
+                                misses = 0;
+                                hits = 0;
+                                currentLevel = 1;
+                                window.alert("Moved back to level 1");
+                                      }
+                    
+                    
+                        if (currentLevel == 1 && misses == 2) {
+                               misses = 0;
+                               hits = 0;
+                               currentLevel = 1;
+                               window.alert("Moved back to level 1");
+                            }
+                    
+                            if (currentLevel == 1 && misses == 3) {
+                                
+                               misses = 0;
+                               hits = 0;
+                               currentLevel = 1; 
+                               window.alert("Moved back to level 1");
+                                                                }
+                                                                
+                    
+                    //for level two
+                        if (currentLevel == 2 && misses == 1) {
+                                misses = 0;
+                                hits = 0;
+                                currentLevel = 1;
+                                window.alert("Moved back to level 1");
+                                      }
+                    
+                    
+                         if (currentLevel == 2 && misses == 2) {
+                                misses = 0;
+                                currentLevel = 1;
+                                window.alert("Moved back to level 1");
+                            }
+                    
+                        if (currentLevel == 2 && misses == 3) {
+                                
+                                misses = 0;
+                                hits = 0;
+                                currentLevel = 1;
+                                
+                                
+                                window.alert("Moved back to level 1");
+                                                                }
+                    //for level three
+                    
+                        if (currentLevel == 3 && misses == 1) {
+                                misses = 0;
+                                hits = 0;
+                                currentLevel = 1;
+                                window.alert("Moved back to level 1");
+                                      }
+                    
+                    
+                         if (currentLevel == 3 && misses == 2) {
+                                misses = 0;
+                                hits = 0;
+                                currentLevel = 1;
+                                window.alert("Moved back to level 1");
+                            }
+                    
+                        if (currentLevel == 3 && misses == 3) {
+                                
+                                misses = 0;
+                                hits = 0;
+                                
+                                currentLevel = 1;
+                                
+                                
+                                window.alert("Moved back to level 1");
+                                                                }
+                    
+                        }
+                                                
+                        //handle collision and hit
+            if (getDistanceShadow() >= 0 && getDistanceShadow() <= 30) {
+                            //start target ball again
+                            //targetBallX = 5;
+                            //alert("hit!!!s");
+
+                            //increment the hits
+                            hits++;
+                            
+
+                            //play the hitAudio
+                            hitAudio.play();
+
+                            //reset the missile 
+                            moveMissile = false;
+                            missileImageY = shadowY - 10;
+
+                            //reset the targetBallX back to 20
+                            shadowImageX = 20;
+                            
+                            
+
+                            //move to next level
+                            if (currentLevel == 1 && hits == 5) {
+                                currentLevel = 2;
+                                hits = 0;
+                                window.alert("You've hit Sapceship 5 times you will be moved  to level 2");
+                            }
+                            if (currentLevel == 2 && hits == 10){
+                                hits = 0;
+                                currentLevel = 3;
+                         window.alert("You've hit Sapceship 10 times you will be moved  to level 3");
+                            }
+                
+                            if (currentLevel == 3 && hits == 15){
+                                hits = 0;
+                                currentLevel = 1;
+                                window.alert("You've destroyed Sapceship");
+                             }
+                
+                        }
+                        
+                    // this is for the three misses
+                                            
+                        if (misses == 3){
+                        
+                        currentLevel = 1;
+                        misses = 0;
+                        hits = 0;
+                        window.alert("Missed three times moved back to level 1");
+                    }
+                    
+                    
+                    function getDistance() {
+                        //code for distance between two points
+                        var xDelta = (targetImageX - missileImageX);
+                        var yDelta = (targetImageY - missileImageY);  
+                        return Math.sqrt(Math.pow((xDelta), 2) + Math.pow((yDelta), 2));
+                                                }
+                        
+                    function getDistanceShadow() {
+                        //code for distance between two points
+                        var xDelta = (shadowImageX - missileImageX);
+                        var yDelta = (missileImageY - shadowImageY);  
+                        return Math.sqrt(Math.pow((xDelta), 2) + Math.pow((yDelta), 2));
+                                                }
+                        
+                    function getDistanceBoss() {
+                        //code for distance between two points
+                        var xDelta = (bossImageX - missileImageX);
+                        var yDelta = (missileImageY - bossImageY);  
+                        return Math.sqrt(Math.pow((xDelta), 2) + Math.pow((yDelta), 2));
+                                                }
+                
+                    
+                    
+                    /*
+                        //code for misses
+                        if (shadowImageX > missileImageX + 5 || missileImageY < shadowImageY) {
+                            
+                            //reset the missile
+                            
+                            moveMissile = false;
+                            missileImageY = tankY - 15;
+                            
+                            shadowImageX = 20;
+                           // misses++;
+                            
+                            
+                        }*/
+                    
+                        //handle miss - detect if the missile is near the top
+                        if ( missileImageY < 5) { 
+                            //reset the missile 
+                            moveMissile = false;
+                            missileImageY = shadowY - 10;
+                            
+                            
+                            //reset the targetImagelX back to 20
+                            shadowImageX = 20;
+                            bossImageX = 400;
+                            misses++;
+                        }
+                    
+                    backgroundAudio.play();
+                         
+                    ctx.font = "10px Futura";
+                    ctx.fillStyle = "powderblue";
+                    ctx.fillText("Hits = " +hits, 3, 150);
+                    ctx.fillText("misses = " +misses, 3, 160);
+                    ctx.fillText("Level = "+currentLevel, 3, 170);
+            
+                    
+                    
+                     //draw the target image of plane
+                    ctx.drawImage(targetImage, targetImageX, targetImageY, 35, 30);  
+                    
+                    ctx.drawImage(missileImage, missileImageX, missileImageY, 30, 30);
+                    
+                    ctx.drawImage(shadowImage, shadowImageX, shadowImageY, 35, 30);
+                                   
+                    ctx.drawImage(bossImage, bossImageX, bossImageY, 45, 30);
+               
+                }, delayBetweenFrames);
+            }
+            
+
+
+            //call the animate() function
+            animate();
+            getDistance();
+            getDistanceShadow();
+            getDistanceBoss();
+                
+        </script>
+            
+    </body>        
+</html>
